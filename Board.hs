@@ -66,9 +66,10 @@ isWonBy bd p = any (hasFiveConsecutive p) (allLines bd)
     allLines board = rows board ++ cols board ++ diags board
     rows = id
     cols board = map (`column` board) [1..size board]
-    diags board = diagonals board -- You need to implement this
+    diags board = diagonals board
 
-    hasFiveConsecutive player line = fiveConsecutive (map (`isMarkedByPlayer` player) line)
+    -- Check if there are five consecutive stones by a player in a line
+    hasFiveConsecutive player line = fiveConsecutive (map (`isMarkedByPlayer` player) line) 
     isMarkedByPlayer stone player = stone == Just player
 
     fiveConsecutive :: [Bool] -> Bool
@@ -77,11 +78,11 @@ isWonBy bd p = any (hasFiveConsecutive p) (allLines bd)
 
     -- The function 'diagonals'' extracts diagonals in one direction
     diagonals :: Board -> [[Stone]]
-    diagonals board = leftDiagonals ++ rightDiagonals
+    diagonals board = leftDiagonals ++ rightDiagonals -- Combine left and right diagonals
       where
         n = size board
-        leftDiagonals = diagonals' id
-        rightDiagonals = diagonals' reverse
+        leftDiagonals = diagonals' id -- Left-to-right diagonals
+        rightDiagonals = diagonals' reverse -- Right-to-left diagonals
         -- 'f' is used to reverse the board for the other direction
         diagonals' f = concatMap (\k -> [downRightDiagonal k, downLeftDiagonal k]) [0..2*(n-1)]
           where
