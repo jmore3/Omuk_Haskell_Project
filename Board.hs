@@ -61,7 +61,14 @@ isFull bd = all (all isJust) bd
 
 -- Check if the game is won by a player
 isWonBy :: Board -> Player -> Bool
-isWonBy bd p = undefined  -- Implement the winning logic
+isWonBy bd p = any (hasFiveConsecutive p) (allLines bd)
+  where
+    allLines board = rows board ++ cols board ++ diags board
+    rows = id
+    cols board = map (`column` board) [1..size board]
+    diags board = undefined -- Implement diagonal checks
+
+    hasFiveConsecutive player line = undefined -- Implement check for five consecutive stones
 
 -- Check if the game is a draw
 isDraw :: Board -> Bool
@@ -73,5 +80,8 @@ isGameOver bd = isDraw bd || isWonBy bd mkPlayer || isWonBy bd mkOpponent
 
 -- Convert the board to a string for printing
 boardToStr :: (Player -> Char) -> Board -> String
-boardToStr playerToChar bd = undefined  -- Implement string representation logic
-
+boardToStr playerToChar bd =
+    unlines [unwords [cellToStr $ bd !! (y - 1) !! (x - 1) | x <- [1..size bd]] | y <- [1..size bd]]
+  where
+    cellToStr (Just p) = [playerToChar p]
+    cellToStr Nothing = "."
