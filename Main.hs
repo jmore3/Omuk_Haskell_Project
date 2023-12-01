@@ -34,18 +34,6 @@ playGame board player isComputer = do
             -- Switch player and continue the game
             playGame newBoard (if player == mkPlayer then mkOpponent else mkPlayer)
 
-    -- Check if the game is over
-    if isGameOver board
-        then putStrLn "Game over!" >> announceResult board
-        else do
-            -- Read the next move
-            putStrLn $ "Player " ++ show player ++ "'s turn (Enter x y coordinates):"
-            move <- readXY board player
-            let newBoard = mark (fst move) (snd move) board player
-
-            -- Switch player and continue the game
-            playGame newBoard (if player == mkPlayer then mkOpponent else mkPlayer)
-
 -- Convert a player to a character for display
 playerToChar :: Player -> Char
 playerToChar p
