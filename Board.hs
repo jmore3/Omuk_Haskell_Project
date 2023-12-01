@@ -66,9 +66,30 @@ isWonBy bd p = any (hasFiveConsecutive p) (allLines bd)
     allLines board = rows board ++ cols board ++ diags board
     rows = id
     cols board = map (`column` board) [1..size board]
-    diags board = undefined -- Implement diagonal checks
+    diags board = diagonals board -- You need to implement this
 
-    hasFiveConsecutive player line = undefined -- Implement check for five consecutive stones
+    hasFiveConsecutive player line = fiveConsecutive (map (`isMarkedByPlayer` player) line)
+    isMarkedByPlayer stone player = stone == Just player
+
+    fiveConsecutive :: [Bool] -> Bool
+    fiveConsecutive (a:b:c:d:e:rest) = (a && b && c && d && e) || fiveConsecutive (b:c:d:e:rest)
+    fiveConsecutive _ = False
+
+    diagonals :: Board -> [[Stone]]
+    diagonals board = undefined -- Implement diagonal checks
+
+-- The function 'diagonals'' extracts diagonals in one direction
+diagonals :: Board -> [[Stone]]
+diagonals board = leftDiagonals ++ rightDiagonals
+  where
+    n = size board
+    leftDiagonals = diagonals' id
+    rightDiagonals = diagonals' reverse
+    -- 'f' is used to reverse the board for the other direction
+    diagonals' f = concatMap (\k -> [downRightDiagonal k, downLeftDiagonal k]) [0..2*(n-1)]
+      where
+        downRightDiagonal k = [board !! i !! j | i <- [0..n-1], j <- [0..n-1], i + j == k]
+        downLeftDiagonal k = [board !! i !! j | i <- [0..n-1], j <- [0..n-1], i - j == k - (n-1)]
 
 -- Check if the game is a draw
 isDraw :: Board -> Bool
