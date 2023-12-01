@@ -3,6 +3,7 @@ module Main where
 
 import Board
 import System.IO
+import System.Random (randomRIO)
 
 -- Main function to start the game
 main :: IO ()
@@ -11,11 +12,27 @@ main = do
     putStrLn "Welcome to the Omok Game!"
     playGame board mkPlayer
 
--- Function to handle the game loop
-playGame :: Board -> Player -> IO ()
-playGame board player = do
+playGame :: Board -> Player -> Bool -> IO ()
+playGame board player isComputer = do
     -- Display the board
     putStrLn $ boardToStr playerToChar board
+
+    -- Check if the game is over
+    if isGameOver board
+        then putStrLn "Game over!" >> announceResult board
+        else do
+            newBoard <- if isComputer && player == mkOpponent
+                            then do
+                                putStrLn "Computer's turn."
+                                move <- getRandomXY board
+                                return $ mark (fst move) (snd move) board player
+                            else do
+                                putStrLn $ "Player " ++ show player ++ "'s turn (Enter x y coordinates):"
+                                move <- readXY board player
+                                return $ mark (fst move) (snd move) board player
+
+            -- Switch player and continue the game
+            playGame newBoard (if player == mkPlayer then mkOpponent else mkPlayer)
 
     -- Check if the game is over
     if isGameOver board
@@ -35,6 +52,11 @@ playerToChar p
     | p == mkPlayer = 'O'
     | p == mkOpponent = 'X'
     | otherwise = '.'
+
+-- Generates a random move for the computer opponent
+getRandomXY :: Board -> IO (Int, Int)
+getRandomXY board = do
+    -- implementation as described earlier
 
 -- Read a pair of indices (x, y) from the user
 readXY :: Board -> Player -> IO (Int, Int)
