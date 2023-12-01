@@ -75,21 +75,18 @@ isWonBy bd p = any (hasFiveConsecutive p) (allLines bd)
     fiveConsecutive (a:b:c:d:e:rest) = (a && b && c && d && e) || fiveConsecutive (b:c:d:e:rest)
     fiveConsecutive _ = False
 
+    -- The function 'diagonals'' extracts diagonals in one direction
     diagonals :: Board -> [[Stone]]
-    diagonals board = undefined -- Implement diagonal checks
-
--- The function 'diagonals'' extracts diagonals in one direction
-diagonals :: Board -> [[Stone]]
-diagonals board = leftDiagonals ++ rightDiagonals
-  where
-    n = size board
-    leftDiagonals = diagonals' id
-    rightDiagonals = diagonals' reverse
-    -- 'f' is used to reverse the board for the other direction
-    diagonals' f = concatMap (\k -> [downRightDiagonal k, downLeftDiagonal k]) [0..2*(n-1)]
+    diagonals board = leftDiagonals ++ rightDiagonals
       where
-        downRightDiagonal k = [board !! i !! j | i <- [0..n-1], j <- [0..n-1], i + j == k]
-        downLeftDiagonal k = [board !! i !! j | i <- [0..n-1], j <- [0..n-1], i - j == k - (n-1)]
+        n = size board
+        leftDiagonals = diagonals' id
+        rightDiagonals = diagonals' reverse
+        -- 'f' is used to reverse the board for the other direction
+        diagonals' f = concatMap (\k -> [downRightDiagonal k, downLeftDiagonal k]) [0..2*(n-1)]
+          where
+            downRightDiagonal k = [board !! i !! j | i <- [0..n-1], j <- [0..n-1], i + j == k]
+            downLeftDiagonal k = [board !! i !! j | i <- [0..n-1], j <- [0..n-1], i - j == k - (n-1)]
 
 -- Check if the game is a draw
 isDraw :: Board -> Bool
